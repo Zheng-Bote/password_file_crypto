@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.28)
 project(password_file_crypto 
 VERSION 1.0.0
 DESCRIPTION "A simple password file en-/de-cryption tool using libsodium"
-HOMEPAGE_URL ""
+HOMEPAGE_URL "https://github.com/Zheng-Bote/password_file_crypto"
 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
