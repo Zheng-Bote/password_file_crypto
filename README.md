@@ -6,8 +6,19 @@ encrypts and decrypts files using a password with Argon2id
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
 **Table of Contents**
+
+- [Description](#description)
+- [Features](#features)
+- [Project Structure](#project-structure)
+- [Building the Project](#building-the-project)
+- [Usage](#usage)
+  - [Encrypt a file](#encrypt-a-file)
+  - [Decrypt a file](#decrypt-a-file)
+- [Encryption Format](#encryption-format)
+- [Security Notes](#security-notes)
+- [📄 License](#-license)
+- [🤝 Authors](#-authors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
