@@ -1,5 +1,20 @@
 # File Encryption Tool (C++23 + libsodium)
 
+encrypts and decrypts files using a password with Argon2id
+
+---
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+**Table of Contents**
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+---
+
+## Description
+
 A lightweight command‑line application for Linux that encrypts and decrypts files using a password. The project uses Argon2id for key derivation and XSalsa20‑Poly1305 for authenticated encryption via crypto_secretbox_easy. All cryptographic components are provided by libsodium, which is automatically built and bundled through CMake.
 
 The encrypted file format is:
