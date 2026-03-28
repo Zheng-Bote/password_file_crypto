@@ -1,4 +1,4 @@
-# File Encryption Tool (C++23 + libsodium)
+# File Encryption Tool (libsodium)
 
 encrypts and decrypts files using a password with Argon2id
 
