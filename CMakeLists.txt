@@ -1,4 +1,7 @@
 cmake_minimum_required(VERSION 3.28)
+
+# cmake -S . -B build; cmake --build build --config Release
+
 project(password_file_crypto 
 VERSION 1.0.0
 DESCRIPTION "A simple password file en-/de-cryption tool using libsodium"
@@ -10,42 +13,39 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-include(FetchContent)
-include(ExternalProject)
-
-# libsodium holen
-FetchContent_Declare(
-    libsodium_src
-    GIT_REPOSITORY https://github.com/jedisct1/libsodium.git
-    GIT_TAG stable
-)
-
-FetchContent_GetProperties(libsodium_src)
-if(NOT libsodium_src_POPULATED)
-    FetchContent_Populate(libsodium_src)
+# Configure static runtime library for MSVC
+if(MSVC)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
-# libsodium bauen und lokal installieren
-ExternalProject_Add(libsodium_build
-    SOURCE_DIR        ${libsodium_src_SOURCE_DIR}
-    CONFIGURE_COMMAND ./configure --prefix=${CMAKE_BINARY_DIR}/libsodium-install
-    BUILD_COMMAND     make
-    INSTALL_COMMAND   make install
-    BUILD_IN_SOURCE   1
-)
+include(FetchContent)
 
-# Include- und Library-Pfade setzen
-set(LIBSODIUM_INCLUDE_DIR ${CMAKE_BINARY_DIR}/libsodium-install/include)
-set(LIBSODIUM_LIBRARY     ${CMAKE_BINARY_DIR}/libsodium-install/lib/libsodium.a)
+# Fetch a CMake-enabled wrapper for libsodium to avoid ./configure issues on Windows
+set(BUILD_SHARED_LIBS OFF)
+# Disable libsodium tests
+set(SODIUM_DISABLE_TESTS ON)
+FetchContent_Declare(
+    libsodium
+    GIT_REPOSITORY https://github.com/robinlinden/libsodium-cmake.git
+)
+FetchContent_MakeAvailable(libsodium)
 
 add_executable(password_file_crypto
     src/main.cpp
 )
 
-add_dependencies(password_file_crypto libsodium_build)
+# Use static definition for libsodium
+target_compile_definitions(password_file_crypto PRIVATE SODIUM_STATIC)
 
-target_include_directories(password_file_crypto PRIVATE ${LIBSODIUM_INCLUDE_DIR})
-target_link_libraries(password_file_crypto PRIVATE ${LIBSODIUM_LIBRARY})
+target_link_libraries(password_file_crypto PRIVATE sodium)
+
+# Ensure GCC/MinGW links standard libraries statically
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    # if not using MSVC, add -static
+    if(NOT MSVC)
+        target_link_options(password_file_crypto PRIVATE -static)
+    endif()
+endif()
 
 file(GENERATE OUTPUT "${CMAKE_BINARY_DIR}/libs.txt" 
      CONTENT "$<TARGET_PROPERTY:${PROJECT_NAME},LINK_LIBRARIES>")

@@ -1,6 +1,15 @@
-# File Encryption Tool (libsodium)
+<div id="top" align="center">
+<h1>File Encryption Tool (libsodium)</h1>
 
-encrypts and decrypts files using a password with Argon2id
+<p>encrypts and decrypts files using a password with Argon2id</p>
+
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20Windows%20%7C%20macOS-lightgrey.svg)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/Zheng-Bote/password_file_crypto?logo=GitHub)](https://github.com/Zheng-Bote/password_file_crypto/releases)
+<br/>
+[Report Issue](https://github.com/Zheng-Bote/password_file_crypto/issues) · [Request Feature](https://github.com/Zheng-Bote/password_file_crypto/pulls)
+
+</div>
 
 ---
 
@@ -25,6 +34,8 @@ encrypts and decrypts files using a password with Argon2id
 ---
 
 ## Description
+
+![Language](https://img.shields.io/badge/language-C%2B%2B23-00599C.svg)
 
 A lightweight command‑line application for Linux that encrypts and decrypts files using a password. The project uses Argon2id for key derivation and XSalsa20‑Poly1305 for authenticated encryption via crypto_secretbox_easy. All cryptographic components are provided by libsodium, which is automatically built and bundled through CMake.
 
@@ -132,3 +143,5 @@ Copyright (c) 2026 ZHENG Robert
 ---
 
 :vulcan_salute:
+
+<p align="right">(<a href="#top">back to top</a>)</p>
