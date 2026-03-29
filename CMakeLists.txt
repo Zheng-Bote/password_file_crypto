@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.28)
 
-# cmake -S . -B build; cmake --build build --config Release
+# cmake -S . -B build -DCMAKE_BUILD_TYPE=Release; cmake --build build --config Release
 
 project(password_file_crypto 
 VERSION 1.0.0

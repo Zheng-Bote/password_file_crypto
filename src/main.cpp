@@ -1,3 +1,21 @@
+/**
+ * SPDX-FileComment: Entry point and core logic for password-based file encryption/decryption using libsodium
+ * SPDX-FileType: SOURCE
+ * SPDX-FileContributor: ZHENG Robert
+ * SPDX-FileCopyrightText: 2026 ZHENG Robert
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * @file main.cpp
+ * @brief Main file for cryptographic file operations using libsodium
+ * @version 1.0.0
+ * @date 2026-03-29
+ *
+ * @author ZHENG Robert (robert@hase-zheng.net)
+ * @copyright Copyright (c) 2026 ZHENG Robert
+ *
+ * @license Apache-2.0
+ */
+
 #include <sodium.h>
 
 #include <cstdint>
@@ -6,8 +24,19 @@
 #include <string>
 #include <vector>
 
+/**
+ * @namespace
+ * @brief Anonymous namespace containing utility functions for file IO and cryptography
+ */
 namespace {
 
+/**
+ * @brief Reads the entire contents of a file into a byte vector.
+ *
+ * @param path The path to the file to be read.
+ * @param data The vector where the file's binary data will be stored.
+ * @return bool True if the file was read successfully, false otherwise.
+ */
 bool read_file(const std::string& path, std::vector<std::uint8_t>& data) {
     std::ifstream ifs(path, std::ios::binary);
     if (!ifs) return false;
@@ -22,6 +51,13 @@ bool read_file(const std::string& path, std::vector<std::uint8_t>& data) {
     return true;
 }
 
+/**
+ * @brief Writes the given binary data into a file.
+ *
+ * @param path The path to the file to write to.
+ * @param data The vector containing binary data to be written.
+ * @return bool True if the write operation was successful, false otherwise.
+ */
 bool write_file(const std::string& path, const std::vector<std::uint8_t>& data) {
     std::ofstream ofs(path, std::ios::binary | std::ios::trunc);
     if (!ofs) return false;
@@ -33,6 +69,14 @@ bool write_file(const std::string& path, const std::vector<std::uint8_t>& data) 
     return true;
 }
 
+/**
+ * @brief Derives a cryptographic key from a password using Argon2id.
+ *
+ * @param password The user-provided password from which the key will be derived.
+ * @param salt An array of salt bytes.
+ * @param key An array where the derived key will be stored.
+ * @return bool True if the key was derived successfully, false otherwise.
+ */
 bool derive_key_from_password(const std::string& password,
                               const std::uint8_t salt[crypto_pwhash_SALTBYTES],
                               std::uint8_t key[crypto_secretbox_KEYBYTES]) {
@@ -47,6 +91,18 @@ bool derive_key_from_password(const std::string& password,
     return true;
 }
 
+/**
+ * @brief Encrypts a file using a password-derived key.
+ *
+ * Reads the content of an input file, derives a key from the provided password
+ * and a randomly generated salt, encrypts the data using symmetric encryption 
+ * (libsodium secretbox), and writes the salt, nonce, and ciphertext to the output file.
+ *
+ * @param in_path The path to the plaintext input file.
+ * @param out_path The path to the destination encrypted file.
+ * @param password The password used to derive the encryption key.
+ * @return bool True if the encryption and writing process is successful, false otherwise.
+ */
 bool encrypt_file(const std::string& in_path,
                   const std::string& out_path,
                   const std::string& password) {
@@ -97,6 +153,19 @@ bool encrypt_file(const std::string& in_path,
     return true;
 }
 
+/**
+ * @brief Decrypts an encrypted file using the provided password.
+ *
+ * Reads the salt, nonce, and ciphertext from the input file, derives the original
+ * key from the given password and salt, decrypts the ciphertext, and writes the
+ * plaintext to the output file.
+ *
+ * @param in_path The path to the encrypted input file.
+ * @param out_path The path to the destination plaintext file.
+ * @param password The password used to derive the decryption key.
+ * @return bool True if decryption and writing was successful, false if it failed 
+ *         (e.g., wrong password, corrupted file, or IO errors).
+ */
 bool decrypt_file(const std::string& in_path,
                   const std::string& out_path,
                   const std::string& password) {
@@ -146,6 +215,16 @@ bool decrypt_file(const std::string& in_path,
 
 } // namespace
 
+/**
+ * @brief Main entry point of the application.
+ *
+ * Handles initialization of libsodium and parsing of command-line arguments.
+ * Dispatches to either the encrypt_file or decrypt_file function based on user input.
+ *
+ * @param argc The number of command-line arguments.
+ * @param argv An array of string representations of command-line arguments.
+ * @return int 0 on success, 1 on failure.
+ */
 int main(int argc, char* argv[]) {
     if (sodium_init() < 0) {
         std::cerr << "libsodium konnte nicht initialisiert werden\n";
