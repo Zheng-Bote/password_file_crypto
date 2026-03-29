@@ -19,6 +19,7 @@
 
 - [Description](#description)
 - [Features](#features)
+- [See also](#see-also)
 - [Project Structure](#project-structure)
 - [Building the Project](#building-the-project)
 - [Usage](#usage)
@@ -55,6 +56,16 @@ This layout ensures that each encrypted file is self‑contained and can be decr
 - Sef‑contained file format with embedded salt and nonce
 - Fully automated libsodium build via CMake
 - No system‑wide dependencies required
+
+## See also
+
+for very large files and AES-256 encryption:
+
+| link | description |
+| --- | --- |
+| [qt-cli_file_encryption-decryption](https://github.com/Zheng-Bote/qt-cli_file_encryption-decryption) | Qt6 C++23 **commandline application** to encrypt or decrypt a given file on Linux, MacOS, Windows with AES-256 CBC |
+| [qt-desktop_file_encryption-decryption](https://github.com/Zheng-Bote/qt-desktop_file_encryption-decryption) | Qt6 C++23 **desktop application** to encrypt or decrypt a given file on Linux, MacOS, Windows with AES-256 CBC |
+
 
 ## Project Structure
 
