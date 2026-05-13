@@ -7,8 +7,8 @@
  *
  * @file main.cpp
  * @brief Main file for cryptographic file operations using libsodium
- * @version 1.0.0
- * @date 2026-03-29
+ * @version 1.2.0
+ * @date 2026-05-13
  *
  * @author ZHENG Robert (robert@hase-zheng.net)
  * @copyright Copyright (c) 2026 ZHENG Robert
@@ -17,18 +17,58 @@
  */
 
 #include <sodium.h>
+#include <rz_config.hpp>
+#include <check_gh-update.hpp>
 
 #include <cstdint>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
+#include <string_view>
 
 /**
  * @namespace
  * @brief Anonymous namespace containing utility functions for file IO and cryptography
  */
 namespace {
+
+/**
+ * @brief Prints the short version string (vX.Y.Z).
+ */
+void print_short_version() {
+    std::cout << "v" << rz::config::VERSION << std::endl;
+}
+
+/**
+ * @brief Prints the full version information.
+ */
+void print_full_version() {
+    std::cout << "Name:        " << rz::config::PROJECT_NAME << "\n"
+              << "Version:     " << rz::config::VERSION << "\n"
+              << "Description: " << rz::config::PROJECT_DESCRIPTION << "\n"
+              << "URL:         " << rz::config::PROJECT_HOMEPAGE_URL << std::endl;
+}
+
+/**
+ * @brief Checks for updates on GitHub.
+ */
+void check_update() {
+    try {
+        auto result = ghupdate::check_github_update(
+            std::string(rz::config::PROJECT_HOMEPAGE_URL),
+            std::string(rz::config::VERSION)
+        );
+        if (result.hasUpdate) {
+            std::cout << "A new version is available: " << result.latestVersion << "\n"
+                      << "Download it from: " << rz::config::PROJECT_HOMEPAGE_URL << "/releases" << std::endl;
+        } else {
+            std::cout << "You are using the latest version." << std::endl;
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Error checking for updates: " << e.what() << std::endl;
+    }
+}
 
 /**
  * @brief Reads the entire contents of a file into a byte vector.
@@ -231,25 +271,49 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    if (argc != 5) {
+    if (argc < 2) {
         std::cerr << "Usage:\n"
                   << "  " << argv[0] << " encrypt <input> <output> <password>\n"
-                  << "  " << argv[0] << " decrypt <input> <output> <password>\n";
+                  << "  " << argv[0] << " decrypt <input> <output> <password>\n"
+                  << "  " << argv[0] << " -v\n"
+                  << "  " << argv[0] << " --version\n"
+                  << "  " << argv[0] << " --check-update\n";
         return 1;
     }
 
-    std::string mode     = argv[1];
+    std::string_view first_arg = argv[1];
+
+    if (first_arg == "-v") {
+        print_short_version();
+        return 0;
+    }
+
+    if (first_arg == "--version") {
+        print_full_version();
+        return 0;
+    }
+
+    if (first_arg == "--check-update") {
+        check_update();
+        return 0;
+    }
+
+    if (argc != 5) {
+        std::cerr << "Ungültige Anzahl an Argumenten für " << first_arg << "\n";
+        return 1;
+    }
+
     std::string in_path  = argv[2];
     std::string out_path = argv[3];
     std::string password = argv[4];
 
     bool ok = false;
-    if (mode == "encrypt") {
+    if (first_arg == "encrypt") {
         ok = encrypt_file(in_path, out_path, password);
-    } else if (mode == "decrypt") {
+    } else if (first_arg == "decrypt") {
         ok = decrypt_file(in_path, out_path, password);
     } else {
-        std::cerr << "Unbekannter Modus: " << mode << "\n";
+        std::cerr << "Unbekannter Modus: " << first_arg << "\n";
         return 1;
     }
 

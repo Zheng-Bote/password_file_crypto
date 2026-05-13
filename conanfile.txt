@@ -1,0 +1,15 @@
+[requires]
+libsodium/[>=1.0 <2]
+nlohmann_json/[>=3.12 <4]
+cpp-httplib/[>=0.39 <1]
+openssl/[>=3.6 <4]
+
+[options]
+cpp-httplib/*:with_openssl=True
+
+[generators]
+CMakeDeps
+CMakeToolchain
+
+[layout]
+cmake_layout

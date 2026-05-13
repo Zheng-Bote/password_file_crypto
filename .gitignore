@@ -1,1 +1,16 @@
 build/
+out/
+.vscode/
+.idea/
+*.user
+conan.lock
+CMakeUserPresets.json
+conanrunenv*
+conanbuildenv*
+conan_toolchain.cmake
+CMakeCache.txt
+CMakeFiles/
+
+.gitignore
+GEMINI.md
+

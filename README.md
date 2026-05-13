@@ -25,6 +25,7 @@
 - [Usage](#usage)
   - [Encrypt a file](#encrypt-a-file)
   - [Decrypt a file](#decrypt-a-file)
+  - [Version and Update Information](#version-and-update-information)
 - [Encryption Format](#encryption-format)
 - [Security Notes](#security-notes)
 - [📄 License](#-license)
@@ -38,7 +39,7 @@
 
 ![Language](https://img.shields.io/badge/language-C%2B%2B23-00599C.svg)
 
-A lightweight command‑line application for Linux that encrypts and decrypts files using a password. The project uses Argon2id for key derivation and XSalsa20‑Poly1305 for authenticated encryption via crypto_secretbox_easy. All cryptographic components are provided by libsodium, which is automatically built and bundled through CMake.
+A lightweight command‑line application for Linux and Windows that encrypts and decrypts files using a password. The project uses Argon2id for key derivation and XSalsa20‑Poly1305 for authenticated encryption via crypto_secretbox_easy. All cryptographic components are provided by libsodium. Dependency management is handled by Conan v2.
 
 The encrypted file format is:
 
@@ -53,9 +54,10 @@ This layout ensures that each encrypted file is self‑contained and can be decr
 - Modern C++23 codebase
 - Password‑based key derivation using Argon2id
 - Authenticated symmetric encryption using crypto_secretbox_easy
-- Sef‑contained file format with embedded salt and nonce
-- Fully automated libsodium build via CMake
-- No system‑wide dependencies required
+- Self‑contained file format with embedded salt and nonce
+- Dependency management via **Conan v2**
+- Integrated GitHub update checker
+- Cross-platform support (Linux, Windows)
 
 ## See also
 
@@ -73,28 +75,38 @@ This layout ensures that each encrypted file is self‑contained and can be decr
 project/
 │
 ├── CMakeLists.txt
+├── conan.txt
+├── configure/
+│   └── rz_config.hpp.in
 └── src/
-└── main.cpp
+    └── main.cpp
 ```
-
-The root CMakeLists.txt fetches libsodium from GitHub, builds it using Autotools, and links it statically into the final executable.
 
 ## Building the Project
 
-The build process is fully automated and works on any Linux system with a C++23 compiler and CMake installed.
+The build process uses Conan v2 for dependencies and CMake for the build.
+
+### Prerequisites
+- Conan 2.x
+- CMake 3.23+
+- C++23 compliant compiler
+
+### Build Steps
 
 ```bash
-mkdir -p build
-cd build
-cmake ..
-cmake --build . -j"$(nproc)"
+# 1. Install dependencies
+conan install . -f conan.txt --output-folder=build --build=missing
+
+# 2. Configure and build
+cmake --preset conan-default
+cmake --build --preset conan-release
 ```
 
-After compilation, the executable password_file_crypto will be available in the build directory.
+After compilation, the executable `password_file_crypto` will be available in the `build/build/Release` (on Windows) or `build/build` (on Linux) directory.
 
 ## Usage
 
-The application supports two modes: encrypt and decrypt.
+The application supports encryption, decryption, and utility flags.
 
 ### Encrypt a file
 
@@ -103,7 +115,6 @@ The application supports two modes: encrypt and decrypt.
 ```
 
 **Example**:
-
 ```bash
 ./password_file_crypto encrypt plain.txt secret.bin "myPassword123"
 ```
@@ -115,12 +126,15 @@ The application supports two modes: encrypt and decrypt.
 ```
 
 **Example**:
-
 ```bash
 ./password_file_crypto decrypt secret.bin recovered.txt "myPassword123"
 ```
 
-If the password is incorrect or the file is corrupted, decryption will fail with an error message.
+### Version and Update Information
+
+- **Short Version**: `./password_file_crypto -v`
+- **Full Version Info**: `./password_file_crypto --version`
+- **Check for Updates**: `./password_file_crypto --check-update`
 
 ## Encryption Format
 
@@ -132,12 +146,10 @@ Each encrypted file contains all necessary metadata:
 | Nonce      | 24 bytes | Required for crypto_secretbox_easy  |
 | Ciphertext | variable | Encrypted data + authentication tag |
 
-This structure ensures that files remain portable and self‑describing.
-
 ## Security Notes
 
 - Argon2id is used with interactive‑grade parameters for strong password‑based key derivation.
-- Keys are wiped from memory using sodium_memzero after use.
+- Keys are wiped from memory using `sodium_memzero` after use.
 - Encryption is authenticated; tampering with ciphertext results in decryption failure.
 - Always use strong, unique passwords for best security.
 
