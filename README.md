@@ -22,6 +22,8 @@
 - [See also](#see-also)
 - [Project Structure](#project-structure)
 - [Building the Project](#building-the-project)
+  - [Prerequisites](#prerequisites)
+  - [Build Steps](#build-steps)
 - [Usage](#usage)
   - [Encrypt a file](#encrypt-a-file)
   - [Decrypt a file](#decrypt-a-file)
